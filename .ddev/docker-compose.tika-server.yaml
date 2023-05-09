@@ -1,0 +1,20 @@
+version: '3.6'
+
+services:
+  tika: # This is the service name used when running ddev commands accepting the --service flag
+    container_name: ddev-${DDEV_SITENAME}-tika # This is the name of the container. It is recommended to follow the same name convention used in the main docker-compose.yml file.
+    image: apache/tika:latest
+    restart: "no"
+    ports:
+      - 9998 # Tika is served from this port inside the container
+    labels:
+      # These labels ensure this service is discoverable by ddev
+      com.ddev.site-name: ${DDEV_SITENAME}
+      com.ddev.approot: $DDEV_APPROOT
+    environment:
+      - VIRTUAL_HOST=$DDEV_HOSTNAME # This defines the host name the service should be accessible from. This will be sitename.ddev.local
+      - HTTP_EXPOSE=9998 # This defines the port the service should be accessible from at sitename.ddev.local
+  # This links the tika service to the web service defined in the main docker-compose.yml, allowing applications running in the web service to access the solr service at sitename.ddev.local:9998
+  web:
+    links:
+      - tika:$DDEV_HOSTNAME

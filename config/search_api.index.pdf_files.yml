@@ -1,0 +1,100 @@
+uuid: c5f18925-1627-4ede-b58e-6209ffa9ab35
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_pdf
+    - search_api.server.sorl_cloud
+  module:
+    - search_api_solr
+    - file
+    - file_extractor
+    - search_api
+    - node
+third_party_settings:
+  search_api_solr:
+    finalize: true
+    commit_before_finalize: false
+    commit_after_finalize: false
+    debug_finalize: false
+    highlighter:
+      maxAnalyzedChars: 51200
+      fragmenter: gap
+      usePhraseHighlighter: true
+      highlightMultiTerm: true
+      preserveMulti: false
+      regex:
+        slop: 0.5
+        pattern: blank
+        maxAnalyzedChars: 10000
+      highlight:
+        mergeContiguous: false
+        requireFieldMatch: false
+        snippets: 0
+        fragsize: 0
+    mlt:
+      mintf: 1
+      mindf: 1
+      maxdf: 0
+      maxdfpct: 0
+      minwl: 0
+      maxwl: 0
+      maxqt: 100
+      maxntp: 2000
+      boost: false
+      interestingTerms: list
+    term_modifiers:
+      slop: 3
+      fuzzy: 1
+    advanced:
+      index_prefix: ''
+      collection: ''
+      timezone: ''
+    multilingual:
+      limit_to_content_language: false
+      include_language_independent: true
+      use_language_undefined_as_fallback_language: false
+      specific_languages:
+        en: '0'
+      use_universal_collation: true
+id: pdf_files
+name: 'PDF Files'
+description: ''
+read_only: false
+field_settings:
+  file_extractor_extracted_file:
+    label: 'PDF » File » File extractor: extracted file'
+    datasource_id: 'entity:node'
+    property_path: 'field_pdf:entity:file_extractor_extracted_file'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.field_pdf
+      module:
+        - file
+        - file_extractor
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: false
+      selected:
+        - article
+    languages:
+      default: true
+      selected: {  }
+processor_settings:
+  add_url: {  }
+  aggregated_field: {  }
+  auto_aggregated_fulltext_field: {  }
+  entity_type: {  }
+  language_with_fallback: {  }
+  rendered_item: {  }
+  solr_date_range: {  }
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  cron_limit: 5
+  index_directly: true
+  track_changes_in_references: true
+server: sorl_cloud

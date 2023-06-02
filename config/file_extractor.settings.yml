@@ -1,0 +1,13 @@
+extraction_method: tika_server_extractor
+extraction_method_settings:
+  scheme: http
+  host: d9files2.ddev.site
+  port: 9998
+  timeout: 120
+extraction_settings:
+  extractable:
+    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
+    max_filesize: '0'
+    exclude_private: true
+  extraction_result:
+    number_first_bytes: 2MB

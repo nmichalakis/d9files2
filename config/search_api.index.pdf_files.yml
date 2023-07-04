@@ -92,9 +92,9 @@ processor_settings:
   solr_date_range: {  }
 tracker_settings:
   default:
-    indexing_order: fifo
+    indexing_order: lifo
 options:
-  cron_limit: 5
+  cron_limit: 1
   index_directly: true
   track_changes_in_references: true
 server: sorl_cloud

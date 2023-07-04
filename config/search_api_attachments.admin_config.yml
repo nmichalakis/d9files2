@@ -8,7 +8,7 @@ tika_server_extractor_configuration:
   scheme: http
   host: d9files2.ddev.site
   port: '9998'
-  timeout: 95
+  timeout: 180
 docconv_extractor_configuration:
   docconv_path: /usr/bin/docd
 solr_extractor_configuration:

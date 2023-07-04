@@ -47,7 +47,7 @@ backend_config:
     core: pdf
     timeout: 5
     index_timeout: 180
-    optimize_timeout: 20
+    optimize_timeout: 60
     finalize_timeout: 180
     skip_schema_check: false
     solr_version: ''

@@ -9,8 +9,8 @@ dependencies:
     - search_api_solr
     - file
     - file_extractor
-    - search_api
     - node
+    - search_api
 third_party_settings:
   search_api_solr:
     finalize: true
@@ -73,6 +73,14 @@ field_settings:
       module:
         - file
         - file_extractor
+  nid:
+    label: ID
+    datasource_id: 'entity:node'
+    property_path: nid
+    type: integer
+    dependencies:
+      module:
+        - node
 datasource_settings:
   'entity:node':
     bundles:
@@ -87,9 +95,22 @@ processor_settings:
   aggregated_field: {  }
   auto_aggregated_fulltext_field: {  }
   entity_type: {  }
+  highlight:
+    weights:
+      postprocess_query: 0
+    prefix: '<strong>'
+    suffix: '</strong>'
+    excerpt: true
+    excerpt_always: false
+    excerpt_length: 348
+    exclude_fields: {  }
+    highlight: server
+    highlight_partial: false
   language_with_fallback: {  }
   rendered_item: {  }
-  solr_date_range: {  }
+  solr_date_range:
+    weights:
+      preprocess_index: 0
 tracker_settings:
   default:
     indexing_order: lifo

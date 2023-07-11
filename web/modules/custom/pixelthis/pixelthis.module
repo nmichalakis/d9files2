@@ -1,0 +1,219 @@
+<?php
+
+/**
+ * @file
+ */
+
+use Drupal\views\Views;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Render\Markup;
+use Drupal\views\ViewExecutable;
+
+/**
+ * @file
+ * Primary module hooks for pixelthis module.
+ */
+
+/**
+ *
+ */
+function pixelthis_theme() {
+
+  $themes['pixelthis_form'] = ['render element' => 'form'];
+
+  return $themes;
+}
+
+/**
+ *
+ */
+function pixelthis_views_pre_render(ViewExecutable $view) {
+
+  if ($view->id() !== 'saa' || $view->current_display !== 'page_1' || empty($view->result)) {
+    return;
+  }
+
+  $result = $view->result;
+  $exposed_filters = $view->getExposedInput();
+  if (!isset($exposed_filters['search_api_fulltext'])) {
+    return;
+  }
+  $search_term = $exposed_filters['search_api_fulltext'];
+  foreach ($result as $key => $row) {
+    $output = Markup::create(_pixelthis_parse_results($row, $search_term, FALSE));
+    if (!empty(trim($output))) {
+      $result[$key]->saa_field_pdf_attachments[0] = $output;
+    }
+    else {
+      unset($result[$key]);
+    }
+
+  }
+  $view->result = $result;
+}
+
+/**
+ *
+ */
+function pixelthis_parse_pdf_tags($tags, $nid, &$context) {
+  $message = t('Parsing all tags ...');
+  $results = [];
+  $node = Node::load($nid);
+  $output = '';
+  $tag_ids = [];
+  $output = '';
+  foreach ($tags as $tag) {
+
+    $exposed_filters = [
+      'search_api_fulltext' => $tag->label(),
+      'nid' => $nid,
+    ];
+    $view = Views::getView('pdf_search');
+    $view->setDisplay('page_2');
+    // Contextual relationship filter.
+    $view->setExposedInput($exposed_filters);
+    $view->execute();
+
+    if (!$view->result) {
+      continue;
+    }
+
+    foreach ($view->result as $row) {
+      if($row->_item->getExcerpt()) {
+       $output .= $row->_item->getExcerpt();
+      }
+      $tag_ids[] = ['target_id' => $tag->id()];
+      $results[] = $tag->label();
+    }
+  }
+
+  $node->set('field_search_result', $output);
+  $node->field_search_result->format = 'full_html';
+  $node->set('field_tags', $tag_ids);
+  $node->save();
+
+  $context['message'] = $message;
+  $context['results'] = $results;
+
+}
+
+/**
+ * Parses all the result rows from the search.
+ */
+function _pixelthis_parse_results($row, $tag_name = NULL, $add_tag = TRUE) {
+  $output = '';
+  $allExtraData = $row->_item->getAllExtraData();
+  dpm($allExtraData);
+  if (!isset($allExtraData) || !isset($allExtraData['highlighted_fields']['saa_field_pdf_attachments'][0])) {
+    return $output;
+  }
+
+  $output_raw = $allExtraData['highlighted_fields']['saa_field_pdf_attachments'][0];
+  $output_array = explode("\n", $output_raw);
+
+  $found_tags = _pixelthis_get_all_matches($output_array, $tag_name);
+
+  if (!$found_tags) {
+    return $output;
+  }
+
+  if ($add_tag) {
+    $output .= '<h3>' . $tag_name . '</h3>';
+  }
+
+  foreach ($found_tags as $found_tag_text) {
+
+    $output .= $found_tag_text;
+
+    if (count($found_tags) > 1) {
+      $output .= '<hr>';
+    }
+
+  }
+
+  return $output;
+
+}
+
+/**
+ * Find all exact matches of the key tag word.
+ */
+function _pixelthis_get_all_matches(array $data, $search_term) {
+
+  $data_clean = [];
+  foreach ($data as $key => $row) {
+    if (empty(trim($row))) {
+      unset($data[$key]);
+      continue;
+    }
+    $data_clean[$key] = trim(strip_tags($row));
+  }
+
+  // Reset arrays to have same index.
+  $data_clean = array_values($data_clean);
+  $data = array_values($data);
+
+  foreach ($data_clean as $data_clean_key => $data_clean_row) {
+    $preg_search_term = '/' . preg_quote($search_term, '/') . '/';
+    $result = preg_match($preg_search_term, $data_clean_row);
+    $has_search_term = mb_stripos($data_clean_row, $search_term) || $result;
+
+    if (!$has_search_term) {
+      unset($data_clean[$data_clean_key]);
+    }
+    else {
+      $prefix = '';
+      $suffix = '';
+
+      if (isset($data[$data_clean_key - 1])) {
+        $prefix = $data[$data_clean_key - 1];
+      }
+
+      if (isset($data[$data_clean_key + 1])) {
+        $suffix = $data[$data_clean_key + 1];
+      }
+      $data_clean[$data_clean_key] = $prefix . ' ' . $data[$data_clean_key] . ' ' . $suffix;
+    }
+  }
+
+  return $data_clean;
+
+}
+
+/**
+ *
+ */
+function pixelthis_parse_pdf_tags_finished($success, $results, $operations) {
+  // The 'success' parameter means no fatal PHP errors were detected. All
+  // other error management should be handled using 'results'.
+  if ($success) {
+    $message = \Drupal::translation()->formatPlural(
+          count($results),
+          'Βρέθηκε 1 tag.', 'Βρέθηκαν @count tag.'
+      );
+
+  }
+  else {
+    $message = t('Finished with an error.');
+  }
+  \Drupal::messenger()->addStatus($message);
+
+  if ($results) {
+
+    // $message = \Drupal::translation()->formatPlural(
+    //       count($results),
+    //       'Βρέθηκε 1 tag.', 'Βρέθηκαν @count tags.'
+    //   );
+    // \Drupal::messenger()->addStatus($message);
+    foreach ($results as $key => $result) {
+
+      \Drupal::messenger()->addStatus('- ' . $result);
+
+    }
+  }
+  else {
+    \Drupal::messenger()->addStatus('Δεν βρέθηκε κάποιο tag', 'warning');
+
+  }
+
+}

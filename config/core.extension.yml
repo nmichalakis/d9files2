@@ -39,6 +39,7 @@ module:
   page_cache: 0
   path: 0
   path_alias: 0
+  pixelthis: 0
   search: 0
   search_api: 0
   search_api_attachments: 0
@@ -50,6 +51,7 @@ module:
   text: 0
   toolbar: 0
   tour: 0
+  twig_tweak: 0
   ultimate_cron: 0
   update: 0
   user: 0

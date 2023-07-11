@@ -1,0 +1,4 @@
+pixelthis.tags_parser:
+  route_name: pixelthis.tags_parser
+  base_route: entity.node.canonical
+  title: 'Tags File Parser'

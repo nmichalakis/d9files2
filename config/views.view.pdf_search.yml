@@ -106,7 +106,7 @@ display:
           entity_field: null
           plugin_id: search_api
           label: 'Searchable Text'
-          exclude: false
+          exclude: true
           alter:
             alter_text: false
             text: ''
@@ -116,22 +116,22 @@ display:
             external: false
             replace_spaces: false
             path_case: none
-            trim_whitespace: false
+            trim_whitespace: true
             alt: ''
             rel: ''
             link_class: ''
             prefix: ''
             suffix: ''
             target: ''
-            nl2br: false
-            max_length: 512
+            nl2br: true
+            max_length: 256
             word_boundary: true
             ellipsis: true
             more_link: false
             more_link_text: ''
             more_link_path: ''
-            strip_tags: false
-            trim: true
+            strip_tags: true
+            trim: false
             preserve_tags: ''
             html: false
           element_type: ''
@@ -141,14 +141,14 @@ display:
           element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
-          element_default_classes: true
+          element_default_classes: false
           empty: ''
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
           link_to_item: false
           use_highlighting: false
-          multi_type: separator
+          multi_type: ul
           multi_separator: ', '
         field_pdf:
           id: field_pdf
@@ -272,7 +272,7 @@ display:
           hide_alter_empty: true
           link_to_item: false
           use_highlighting: true
-          multi_type: separator
+          multi_type: ul
           multi_separator: ', '
       pager:
         type: mini
@@ -312,53 +312,6 @@ display:
       sorts: {  }
       arguments: {  }
       filters:
-        file_extractor_extracted_file:
-          id: file_extractor_extracted_file
-          table: search_api_index_pdf_files
-          field: file_extractor_extracted_file
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: search_api_text
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: file_extractor_extracted_file_op
-            label: 'PDF » File » File extractor: extracted file'
-            description: ''
-            use_operator: false
-            operator: file_extractor_extracted_file_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: file_extractor_extracted_file
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              content_editor: '0'
-              administrator: '0'
-            min_placeholder: ''
-            max_placeholder: ''
-            placeholder: ''
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
         search_api_fulltext:
           id: search_api_fulltext
           table: search_api_index_pdf_files
@@ -403,10 +356,14 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          parse_mode: direct
+          parse_mode: sloppy_phrase
           min_length: null
           fields:
             - file_extractor_extracted_file
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
       style:
         type: table
         options:
@@ -477,6 +434,129 @@ display:
     display_options:
       display_extenders: {  }
       path: pdf-search
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+      tags:
+        - 'config:field.storage.node.field_pdf'
+        - 'config:search_api.index.pdf_files'
+        - 'search_api_list:pdf_files'
+  page_2:
+    id: page_2
+    display_title: Page
+    display_plugin: page
+    position: 1
+    display_options:
+      filters:
+        search_api_fulltext:
+          id: search_api_fulltext
+          table: search_api_index_pdf_files
+          field: search_api_fulltext
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api_fulltext
+          operator: or
+          value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: search_api_fulltext_op
+            label: 'Fulltext search'
+            description: ''
+            use_operator: false
+            operator: search_api_fulltext_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: search_api_fulltext
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              content_editor: '0'
+              administrator: '0'
+            expose_fields: false
+            placeholder: ''
+            searched_fields_id: search_api_fulltext_searched_fields
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          parse_mode: sloppy_phrase
+          min_length: null
+          fields:
+            - file_extractor_extracted_file
+        nid:
+          id: nid
+          table: search_api_index_pdf_files
+          field: nid
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: search_api_numeric
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: nid_op
+            label: ID
+            description: ''
+            use_operator: false
+            operator: nid_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: nid
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              content_editor: '0'
+              administrator: '0'
+            min_placeholder: ''
+            max_placeholder: ''
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      defaults:
+        filters: false
+        filter_groups: false
+      display_extenders: {  }
+      path: pdf-search-node-for-tags
     cache_metadata:
       max-age: -1
       contexts:

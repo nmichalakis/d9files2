@@ -1,0 +1,17 @@
+pixelthis.tags_parser:
+  path: '/node/{node}/tags_files_parser'
+  defaults:
+    _form: '\Drupal\pixelthis\Form\TagParserForm'
+    _title: 'Batch processing of Tags in a new pdf file'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    node:
+
+pixelthis.search:
+  path: '/search-in-files'
+  defaults:
+    _title: 'Search in Files'
+    _controller: '\Drupal\pixelthis\Controller\PixelthisSearchController::search'
+  requirements:
+    _permission: 'access content'

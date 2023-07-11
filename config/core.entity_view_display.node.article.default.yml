@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.article.body
     - field.field.node.article.field_pdf
+    - field.field.node.article.field_search_result
     - field.field.node.article.field_tags
     - node.type.article
   module:
@@ -23,28 +24,35 @@ content:
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    weight: 0
+    weight: 2
     region: content
   field_pdf:
     type: file_default
-    label: above
+    label: inline
     settings:
       use_description_as_link_text: true
     third_party_settings: {  }
-    weight: 101
+    weight: 0
+    region: content
+  field_search_result:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
     region: content
   field_tags:
     type: entity_reference_label
-    label: above
+    label: inline
     settings:
       link: true
     third_party_settings: {  }
-    weight: 10
+    weight: 1
     region: content
   links:
     settings: {  }
     third_party_settings: {  }
-    weight: 100
+    weight: 4
     region: content
 hidden:
   langcode: true

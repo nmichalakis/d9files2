@@ -29,7 +29,7 @@ function pixelthis_theme() {
  */
 function pixelthis_views_pre_render(ViewExecutable $view) {
 
-  if ($view->id() !== 'saa' || $view->current_display !== 'page_1' || empty($view->result)) {
+  if ($view->id() !== 'pdf_search' || $view->current_display !== 'page_1' || empty($view->result)) {
     return;
   }
 
@@ -40,14 +40,14 @@ function pixelthis_views_pre_render(ViewExecutable $view) {
   }
   $search_term = $exposed_filters['search_api_fulltext'];
   foreach ($result as $key => $row) {
-    $output = Markup::create(_pixelthis_parse_results($row, $search_term, FALSE));
+    $output = _pixelthis_parse_results($row, $search_term, FALSE);
+    $output = Markup::create($output);
     if (!empty(trim($output))) {
-      $result[$key]->saa_field_pdf_attachments[0] = $output;
+      $result[$key]->_item->setExcerpt($output);
     }
     else {
       unset($result[$key]);
     }
-
   }
   $view->result = $result;
 }
@@ -79,8 +79,8 @@ function pixelthis_parse_pdf_tags($tags, $nid, &$context) {
     }
 
     foreach ($view->result as $row) {
-      if($row->_item->getExcerpt()) {
-       $output .= $row->_item->getExcerpt();
+      if ($row->_item->getExcerpt()) {
+        $output .= $row->_item->getExcerpt();
       }
       $tag_ids[] = ['target_id' => $tag->id()];
       $results[] = $tag->label();
@@ -103,16 +103,14 @@ function pixelthis_parse_pdf_tags($tags, $nid, &$context) {
 function _pixelthis_parse_results($row, $tag_name = NULL, $add_tag = TRUE) {
   $output = '';
   $allExtraData = $row->_item->getAllExtraData();
-  dpm($allExtraData);
-  if (!isset($allExtraData) || !isset($allExtraData['highlighted_fields']['saa_field_pdf_attachments'][0])) {
+  if (!isset($allExtraData) || !isset($allExtraData['highlighted_fields']['file_extractor_extracted_file'][0])) {
     return $output;
   }
 
-  $output_raw = $allExtraData['highlighted_fields']['saa_field_pdf_attachments'][0];
+  $output_raw = $allExtraData['highlighted_fields']['file_extractor_extracted_file'][0];
   $output_array = explode("\n", $output_raw);
 
   $found_tags = _pixelthis_get_all_matches($output_array, $tag_name);
-
   if (!$found_tags) {
     return $output;
   }
@@ -121,17 +119,19 @@ function _pixelthis_parse_results($row, $tag_name = NULL, $add_tag = TRUE) {
     $output .= '<h3>' . $tag_name . '</h3>';
   }
 
+  $output .= '<ul>';
   foreach ($found_tags as $found_tag_text) {
 
-    $output .= $found_tag_text;
+    $output .= '<li>'.$found_tag_text .'</li>';
 
     if (count($found_tags) > 1) {
-      $output .= '<hr>';
+      $output .= '</ul><ul>';
     }
 
   }
 
   return $output;
+
 
 }
 
@@ -175,6 +175,7 @@ function _pixelthis_get_all_matches(array $data, $search_term) {
       $data_clean[$data_clean_key] = $prefix . ' ' . $data[$data_clean_key] . ' ' . $suffix;
     }
   }
+
 
   return $data_clean;
 

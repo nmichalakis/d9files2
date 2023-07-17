@@ -11,6 +11,7 @@ dependencies:
     - file_extractor
     - node
     - search_api
+    - search_api_attachments
 third_party_settings:
   search_api_solr:
     finalize: true
@@ -18,11 +19,11 @@ third_party_settings:
     commit_after_finalize: false
     debug_finalize: false
     highlighter:
-      maxAnalyzedChars: 51200
+      maxAnalyzedChars: 512
       fragmenter: gap
       usePhraseHighlighter: true
       highlightMultiTerm: true
-      preserveMulti: false
+      preserveMulti: true
       regex:
         slop: 0.5
         pattern: blank
@@ -95,6 +96,13 @@ processor_settings:
   aggregated_field: {  }
   auto_aggregated_fulltext_field: {  }
   entity_type: {  }
+  file_attachments:
+    excluded_extensions: 'aif art avi bmp gif ico mov oga ogv png psd ra ram rgb flv'
+    number_indexed: 0
+    number_first_bytes: '1 MB'
+    max_filesize: '0'
+    excluded_private: 1
+    excluded_mimes: 'audio/x-aiff image/x-jg video/x-msvideo image/x-ms-bmp image/gif image/vnd.microsoft.icon video/quicktime audio/ogg video/ogg image/png image/x-photoshop audio/x-realaudio audio/x-pn-realaudio image/x-rgb video/x-flv'
   highlight:
     weights:
       postprocess_query: 0
@@ -102,7 +110,7 @@ processor_settings:
     suffix: '</strong>'
     excerpt: true
     excerpt_always: false
-    excerpt_length: 348
+    excerpt_length: 768
     exclude_fields: {  }
     highlight: server
     highlight_partial: false

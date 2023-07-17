@@ -20,7 +20,6 @@ dependencies:
     - search_api_solr.solr_request_dispatcher.request_dispatcher_httpcachingnever_default_7_0_0
     - search_api_solr.solr_request_handler.request_handler_autocomplete_default_7_0_0
     - search_api_solr.solr_request_handler.request_handler_extract_default_7_0_0
-    - search_api_solr.solr_request_handler.request_handler_mlt_default_7_0_0
     - search_api_solr.solr_request_handler.request_handler_select_default_7_0_0
     - search_api_solr.solr_request_handler.request_handler_spell_default_7_0_0
     - search_api_solr.solr_request_handler.request_handler_suggest_default_7_0_0
@@ -32,7 +31,7 @@ name: 'sorl cloud'
 description: ''
 backend: search_api_solr
 backend_config:
-  retrieve_data: false
+  retrieve_data: true
   highlight_data: true
   site_hash: true
   server_prefix: ''
@@ -70,9 +69,10 @@ backend_config:
     - request_handler_elevate_default_7_0_0
     - request_handler_replicationmaster_default_7_0_0
     - request_handler_replicationslave_default_7_0_0
+    - request_handler_mlt_default_7_0_0
   disabled_request_dispatchers:
     - request_dispatcher_httpcaching_default_7_0_0
-  rows: 10
+  rows: 35
   index_single_documents_fallback_count: 10
   index_empty_text_fields: false
   suppress_missing_languages: false

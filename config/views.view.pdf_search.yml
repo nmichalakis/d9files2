@@ -105,7 +105,7 @@ display:
           entity_type: null
           entity_field: null
           plugin_id: search_api
-          label: 'Searchable Text'
+          label: ''
           exclude: true
           alter:
             alter_text: false
@@ -272,8 +272,8 @@ display:
           hide_alter_empty: true
           link_to_item: false
           use_highlighting: true
-          multi_type: ul
-          multi_separator: ', '
+          multi_type: separator
+          multi_separator: ''
       pager:
         type: mini
         options:
@@ -320,7 +320,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: search_api_fulltext
-          operator: or
+          operator: and
           value: ''
           group: 1
           exposed: true
@@ -356,7 +356,7 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          parse_mode: sloppy_phrase
+          parse_mode: phrase
           min_length: null
           fields:
             - file_extractor_extracted_file
